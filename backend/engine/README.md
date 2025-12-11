@@ -1,1 +1,0 @@
-AI is a cyclical money machine
