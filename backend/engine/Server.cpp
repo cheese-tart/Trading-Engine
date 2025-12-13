@@ -44,9 +44,8 @@ using LevelInfos = std::vector<LevelInfo>;
 class OrderbookLevelInfos {
     public:
         OrderbookLevelInfos(const LevelInfos& bids, const LevelInfos& asks)
-            : bids_{ bids }
-            , asks_{ asks }
-        { }
+            : bids_(bids)
+            , asks_(asks) { }
 
         const LevelInfos& GetBids() const { return bids_; }
         const LevelInfos& GetAsks() const { return asks_; }
@@ -58,14 +57,13 @@ class OrderbookLevelInfos {
 
 class Order {
     public:
-        Order(OrderType orderType, OrderId orderId, Side side, Price price, Quantity quantity)
-            : orderType_{ orderType }
-            , orderId_{ orderId }
-            , side_{ side }
-            , price_{ price }
-            , initialQuantity_{ quantity }
-            , remainingQuantity_{ quantity }
-        { }
+        Order(OrderType orderType, OrderId orderId, Side side, Price price, Quantity quantity):
+            orderType_(orderType),
+            orderId_(orderId),
+            side_(side),
+            price_(price),
+            initialQuantity_(quantity),
+            remainingQuantity_(quantity) { }
 
         OrderId GetOrderId() const { return orderId_; }
         Side GetSide() const { return side_; }
@@ -95,12 +93,11 @@ using OrderPointers = std::list<OrderPointer>;
 
 class OrderModfify {
     public:
-        OrderModify(OrderId orderId, Side side, Price price, Quantity quantity)
-            : orderId_{ orderId }
-            , price_{ price }
-            , side_{ side }
-            , quantity_{ quantity }
-        { }
+        OrderModify(OrderId orderId, Side side, Price price, Quantity quantity): 
+            orderId_(orderId),
+            price_(price),
+            side_(side),
+            quantity_(quantity) { }
 
         OrderId GetOrderId() const { return orderId_; }
         Price GetPrice() const { return price_; }
@@ -108,7 +105,7 @@ class OrderModfify {
         Quantity GetQuantity() const { return quantity_; }
 
         OrderPointer ToOrderPointer(OrderType type) const {
-            return std::make_shared<Order>(type, GetOrderId(), GetSide(), GetPrice(), GetQuantity());
+            return std::make_shared<Order>(type, GetOrderId(), GetSize(), GetPrice(), GetQuantity());
         }
 
     private:
@@ -126,10 +123,9 @@ struct TradeInfo {
 
 class Trade {
     public:
-        Trade(const TradeInfo& bidTrade, const TradeInfo& askTrade)
-            : bidTrade_{ bidTrade }
-            , askTrade_{ askTrade }
-        { }
+        Trade(const TradeInfo& bidTrade, const TradeInfo& askTrade):
+            bidTrade_(bidTrade),
+            askTrade_(askTrade) { }
 
         const TradeInfo& GetBidTrade() const { return bidTrade_; }
         const TradeInfo& GetAskTrade() const { return askTrade_; }
