@@ -90,7 +90,69 @@ class Order {
         Quantity remainingQuantity_;
 };
 
-using OrderPointer = std::make_shared<Order>;
+using OrderPointer = std::shared_ptr<Order>;
+using OrderPointers = std::list<OrderPointer>;
+
+class OrderModfify {
+    public:
+        OrderModify(OrderId orderId, Side side, Price price, Quantity quantity)
+            : orderId_{ orderId }
+            , price_{ price }
+            , side_{ side }
+            , quantity_{ quantity }
+        { }
+
+        OrderId GetOrderId() const { return orderId_; }
+        Price GetPrice() const { return price_; }
+        Size GetSize() const { return quantity_; }
+        Quantity GetQuantity() const { return quantity_; }
+
+        OrderPointer ToOrderPointer(OrderType type) const {
+            return std::make_shared<Order>(type, GetOrderId(), GetSide(), GetPrice(), GetQuantity());
+        }
+
+    private:
+        OrderId orderId_;
+        Price price_;
+        Side side_;
+        Quantity quantity_;
+};
+
+struct TradeInfo {
+    OrderId orderId_;
+    Price price_;
+    Quantity quantity_;
+};
+
+class Trade {
+    public:
+        Trade(const TradeInfo& bidTrade, const TradeInfo& askTrade)
+            : bidTrade_{ bidTrade }
+            , askTrade_{ askTrade }
+        { }
+
+        const TradeInfo& GetBidTrade() const { return bidTrade_; }
+        const TradeInfo& GetAskTrade() const { return askTrade_; }
+
+    private:
+        TradeInfo bidTrade_;
+        TradeInfo askTrade_;
+};
+
+using Trade = std::vector<Trade>;
+
+class OrderBook {
+    private:
+        struct OrderEntry {
+            OrderPointer order_{ nullptr };
+            OrderPointers::iterator location_;
+
+        };
+
+        std::map<Price, OrderPointers, std::greater<Price>> bids_;
+        std::map<Price, OrderPointers, std::less<Price>> asks_;
+        std::unordered_map<OrderId, OrderEntry> orders_;
+};
 
 int main() {
     return 0;
